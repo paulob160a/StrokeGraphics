@@ -652,9 +652,99 @@ graphicsError_t flipCharacterHorizontally(alphabetCharacters_tPtr selectedCharac
       }
     else
       {
-      objectError = GRAPHICS_OBJECT_INSTANTIATION_ERROR;
-      }
+      if (selectedCharacter->numberOfLineSegments == ((GRAPHICS_UINT)1))
+        {
+        // The image is a single line segment and the segment end-points are 
+        // equal to the extents. Just mirror top-left and bottom-right
+        extentTop  = selectedCharacter->characterExtents.topLeft.pointY;
+        extentBottom = selectedCharacter->characterExtents.bottomRight.pointY;
 
+        if (extentBottom != extentTop) // cannot flip a linear 'shape'!
+          {
+          if (extentBottom > (extentTop + ((GRAPHICS_INT)1))) // points are seperated by a mid-line
+            {
+            // A definite mid-line...for an even extent in 'x' the mid-line is an integer but 
+            // for an odd extent it will be 'nnn.05'
+            midLine     = ((GRAPHICS_FLOAT)extentTop) + ((((GRAPHICS_FLOAT)extentBottom) - ((GRAPHICS_FLOAT)extentTop)) / ((GRAPHICS_FLOAT)2.0));
+
+            lineSegment = selectedCharacter->characterLineSegments;
+
+            pointY = ((GRAPHICS_FLOAT)lineSegment->lineSegmentOriginY);
+
+            if (pointY < midLine)
+              {
+              pointDistance = midLine - pointY;
+
+              lineSegment->lineSegmentOriginY = ((GRAPHICS_INT)(midLine + pointDistance));
+              }
+            else
+              {
+              if (pointY > midLine)
+                {
+                pointDistance = pointY - midLine;
+
+                lineSegment->lineSegmentOriginY = ((GRAPHICS_INT)(midLine - pointDistance));
+                }
+              else
+                {
+                lineSegment->lineSegmentOriginY = (GRAPHICS_INT)midLine;
+                }
+              }
+
+            pointY = ((GRAPHICS_FLOAT)lineSegment->lineSegmentDestinationY);
+
+            if (pointY < midLine)
+              {
+              pointDistance = midLine - pointY;
+
+              lineSegment->lineSegmentDestinationY = ((GRAPHICS_INT)(midLine + pointDistance));
+              }
+            else
+              {
+              if (pointY > midLine)
+                {
+                pointDistance = pointY - midLine;
+
+                lineSegment->lineSegmentDestinationY = ((GRAPHICS_INT)(midLine - pointDistance));
+                }
+              else
+                {
+                lineSegment->lineSegmentDestinationY = (GRAPHICS_INT)midLine;
+                }
+              }
+            }
+          else
+            {
+            if (extentBottom > extentTop) // all points are seperated by 0 or +1
+              {
+              lineSegment = selectedCharacter->characterLineSegments;
+        
+              if (lineSegment->lineSegmentOriginY == extentBottom)
+                {
+                lineSegment->lineSegmentOriginY = extentTop;
+                }
+              else
+                {
+                lineSegment->lineSegmentOriginY = extentBottom;
+                }
+        
+              if (lineSegment->lineSegmentDestinationY == extentBottom)
+                {
+                lineSegment->lineSegmentDestinationY = extentTop;
+                }
+              else
+                {
+                lineSegment->lineSegmentDestinationY = extentBottom;
+                }
+              }
+            }
+          }
+        else
+          {
+          objectError = GRAPHICS_OBJECT_INSTANTIATION_ERROR;
+          }  
+        }
+      }
     }
 
 /******************************************************************************/
@@ -667,7 +757,7 @@ graphicsError_t flipCharacterHorizontally(alphabetCharacters_tPtr selectedCharac
 /******************************************************************************/
 /* flipCharacterVertically :                                                  */
 /* - note "left" and "right" imply that "left" coordinate values are smaller  */
-/*   than "right coordinate values                                            */
+/*   than "right" coordinate values                                           */
 /******************************************************************************/
 
 graphicsError_t flipCharacterVertically(alphabetCharacters_tPtr selectedCharacter)
@@ -794,10 +884,100 @@ graphicsError_t flipCharacterVertically(alphabetCharacters_tPtr selectedCharacte
       }
     else
       {
-      objectError = GRAPHICS_OBJECT_INSTANTIATION_ERROR;
+      if (selectedCharacter->numberOfLineSegments == ((GRAPHICS_UINT)1))
+        {
+        // The image is a single line segment and the segment end-points are 
+        // equal to the extents. Just mirror top-left and bottom-right
+        extentLeft  = selectedCharacter->characterExtents.topLeft.pointX;
+        extentRight = selectedCharacter->characterExtents.bottomRight.pointX;
+
+        if (extentRight != extentLeft) // cannot flip a linear 'shape'!
+          {
+          if (extentRight > (extentLeft + ((GRAPHICS_INT)1))) // points are seperated by a mid-line
+            {
+            // A definite mid-line...for an even extent in 'x' the mid-line is an integer but 
+            // for an odd extent it will be 'nnn.05'
+            midLine     = ((GRAPHICS_FLOAT)extentLeft) + ((((GRAPHICS_FLOAT)extentRight) - ((GRAPHICS_FLOAT)extentLeft)) / ((GRAPHICS_FLOAT)2.0));
+
+            lineSegment = selectedCharacter->characterLineSegments;
+
+            pointX = ((GRAPHICS_FLOAT)lineSegment->lineSegmentOriginX);
+
+            if (pointX < midLine)
+              {
+              pointDistance = midLine - pointX;
+
+              lineSegment->lineSegmentOriginX = ((GRAPHICS_INT)(midLine + pointDistance));
+              }
+            else
+              {
+              if (pointX > midLine)
+                {
+                pointDistance = pointX - midLine;
+
+                lineSegment->lineSegmentOriginX = ((GRAPHICS_INT)(midLine - pointDistance));
+                }
+              else
+                {
+                lineSegment->lineSegmentOriginX = (GRAPHICS_INT)midLine;
+                }
+              }
+
+            pointX = ((GRAPHICS_FLOAT)lineSegment->lineSegmentDestinationX);
+
+            if (pointX < midLine)
+              {
+              pointDistance = midLine - pointX;
+
+              lineSegment->lineSegmentDestinationX = ((GRAPHICS_INT)(midLine + pointDistance));
+              }
+            else
+              {
+              if (pointX > midLine)
+                {
+                pointDistance = pointX - midLine;
+
+                lineSegment->lineSegmentDestinationX = ((GRAPHICS_INT)(midLine - pointDistance));
+                }
+              else
+                {
+                lineSegment->lineSegmentDestinationX = (GRAPHICS_INT)midLine;
+                }
+              }
+            }
+          else
+            {
+            if (extentRight > extentLeft) // all points are seperated by 0 or +1
+              {
+              lineSegment = selectedCharacter->characterLineSegments;
+        
+              if (lineSegment->lineSegmentOriginX == extentRight)
+                {
+                lineSegment->lineSegmentOriginX = extentLeft;
+                }
+              else
+                {
+                lineSegment->lineSegmentOriginX = extentRight;
+                }
+        
+              if (lineSegment->lineSegmentDestinationX == extentRight)
+                {
+                lineSegment->lineSegmentDestinationX = extentLeft;
+                }
+              else
+                {
+                lineSegment->lineSegmentDestinationX = extentRight;
+                }
+              }
+            }
+          }
+        else
+          {
+          objectError = GRAPHICS_OBJECT_INSTANTIATION_ERROR;
+          }  
+        }
       }
     }
-
 
 /******************************************************************************/
 

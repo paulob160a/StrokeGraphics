@@ -657,11 +657,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                            (characterSelectionState.lastSelectionState == CHARACTER_SELECTION_STATE_NONE) &&
                            (translatedCharacterState.receivedCodeState == true)                           &&
                            (translatedCharacterState.keydownState      == true)                           &&
-
-                           //(!((wParam                                  == CHARACTER_SELECT_KEY)           &&
-                           //   (characterActive                         == true)))                         &&
-
-                              (wParam                                  != KEY_ESC_EXIT))
+                           (wParam                                     != KEY_ESC_EXIT))
                          {
                          characterSelectionState.selectedCharacter = (GRAPHICS_UINT)wParam;
                          actualCode                                = (GRAPHICS_UINT)wParam;
@@ -1076,8 +1072,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                                                                     break;
                            
-                             case KEY_ESC_EXIT                    :
-                                                                    PostMessage(hWnd, WM_CLOSE, 0, 0);
+                             case KEY_ESC_EXIT                    : if (MessageBoxW(NULL, MESSAGE_BOX_EXIT_STATEMENT, MESSAGE_BOX_EXIT_CAPTION, MESSAGE_BOX_EXIT_BEHAVIOUR) == IDOK)
+                                                                      {
+                                                                      PostMessage(hWnd, WM_CLOSE, 0, 0);
+                                                                      }
                                                                     [[fallthrough]]; // warning C26819 fallthrough is explicit
                              
                              default                              : 

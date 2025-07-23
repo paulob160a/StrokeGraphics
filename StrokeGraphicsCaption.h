@@ -24,6 +24,10 @@
 #define MESSAGE_BOX_ERROR_CAPTION             L"StrokeGraphics : "
 #define MESSAGE_BOX_ERROR_BEHAVIOUR            (MB_OK)
  
+#define MESSAGE_BOX_EXIT_STATEMENT            L" Do you really want to \n\n EXIT ?"
+#define MESSAGE_BOX_EXIT_CAPTION              L"Exit Alert : "
+#define MESSAGE_BOX_EXIT_BEHAVIOUR             (MB_OKCANCEL)
+
 #define MESSAGE_BOX_FILE_LOAD_ERROR_STATEMENT L" Error : the requested load file index is not recognised"
 #define MESSAGE_BOX_FILE_SAVE_ERROR_STATEMENT L" Error : the requested save file index has not been generated"
 
