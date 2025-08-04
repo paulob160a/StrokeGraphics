@@ -181,6 +181,154 @@ graphicsError_t addLineSegmentToCharacterList(const GRAPHICS_UINT           char
   } /* end of addLineSegmentToCharacterList                                   */
 
 /******************************************************************************/
+/* normaliseCharacterSegments() :                                             */
+/* - converts a characters' line segments to normalised 'REAL' numbers        */
+/******************************************************************************/
+
+graphicsError_t normaliseCharacterSegments(const alphabetCharacters_tPtr      characterReference,
+                                                 alphabetCharactersReal_tPtr *normalisedReference)
+  {
+/******************************************************************************/
+
+  GRAPHICS_UINT        newSegmentIndex     = ((GRAPHICS_UINT)0);
+  lineSegment_tPtr     oldSegmentTrack     = nullptr;
+
+  lineSegmentReal_tPtr newSegmentTrack     = nullptr,
+                       newSegmentReference = nullptr,
+                       nullSegment         = nullptr;
+
+  GRAPHICS_INT         extentLeftX         = ((GRAPHICS_INT)0),
+                       extentTopY          = ((GRAPHICS_INT)0),
+                       extentRightX        = ((GRAPHICS_INT)0),
+                       extentBottomY       = ((GRAPHICS_INT)0);
+
+  GRAPHICS_REAL        normaliseMaximumX   = ((GRAPHICS_REAL)0.0),
+                       normaliseMaximumY   = ((GRAPHICS_REAL)0.0);
+                       
+  graphicsError_t      objectError         = GRAPHICS_NO_ERROR;
+
+/******************************************************************************/
+
+  if (characterReference != nullptr)
+    {
+    if (characterReference->numberOfLineSegments != ((GRAPHICS_UINT)0))
+      {
+      // Compute the normalising range from the character extents
+      extentLeftX   = characterReference->characterExtents.topLeft.pointX;
+      extentTopY    = characterReference->characterExtents.topLeft.pointY;
+      extentRightX  = characterReference->characterExtents.bottomRight.pointX;
+      extentBottomY = characterReference->characterExtents.bottomRight.pointY;
+
+      // If 'x' or 'y' extents are equal no normalisation in that axis is 
+      // necessary/possible
+      if ((extentLeftX - extentRightX) != ((GRAPHICS_INT)0))
+        {
+        if (abs(extentLeftX) >= abs(extentRightX))
+          {
+          normaliseMaximumX = (GRAPHICS_REAL)abs(extentLeftX);
+          }
+        else
+          {
+          normaliseMaximumX = (GRAPHICS_REAL)abs(extentRightX);
+          }
+        }
+
+      if ((extentTopY - extentBottomY) != ((GRAPHICS_INT)0))
+        {
+        if (abs(extentTopY) >= abs(extentBottomY))
+          {
+          normaliseMaximumY = (GRAPHICS_REAL)abs(extentTopY);
+          }
+        else
+          {
+          normaliseMaximumY = (GRAPHICS_REAL)abs(extentBottomY);
+          }
+        }
+
+      if ((*normalisedReference = (alphabetCharactersReal_tPtr)calloc(((size_t)1), ((size_t)sizeof(alphabetCharactersReal_t)))) != nullptr)
+        {
+        // Make a partial "deep" copy of the character definition
+        (*normalisedReference)->characterNumber      = characterReference->characterNumber;
+        (*normalisedReference)->characterExtents     = characterReference->characterExtents;
+        (*normalisedReference)->lineSegmentIndex     = ((GRAPHICS_INT)0);
+
+        // Create an empty segment to terminate the lsit
+        if ((nullSegment = (lineSegmentReal_tPtr)calloc(((size_t)1), ((size_t)sizeof(lineSegmentReal_t)))) != nullptr)
+          {
+          // Recreate and normalise the segments
+          (*normalisedReference)->numberOfLineSegments  = ((GRAPHICS_UINT)0);
+          (*normalisedReference)->characterLineSegments = nullSegment;
+       
+          oldSegmentTrack                               = characterReference->characterLineSegments;
+
+          for (newSegmentIndex = ((GRAPHICS_UINT)0); newSegmentIndex < characterReference->numberOfLineSegments; newSegmentIndex++)
+            {
+            if ((newSegmentReference = (lineSegmentReal_tPtr)calloc(((size_t)1), ((size_t)sizeof(lineSegmentReal_t)))) != nullptr)
+              {
+              newSegmentTrack                              = (*normalisedReference)->characterLineSegments;
+
+              // Populate the new segment; the pointers will be recalculated
+              newSegmentReference->lineSegmentOriginX      = (GRAPHICS_REAL)oldSegmentTrack->lineSegmentOriginX;
+              newSegmentReference->lineSegmentOriginY      = (GRAPHICS_REAL)oldSegmentTrack->lineSegmentOriginY;
+              newSegmentReference->lineSegmentDestinationX = (GRAPHICS_REAL)oldSegmentTrack->lineSegmentDestinationX;
+              newSegmentReference->lineSegmentDestinationY = (GRAPHICS_REAL)oldSegmentTrack->lineSegmentDestinationY;
+
+              // Normalise the two line segment end-points
+              if (normaliseMaximumX != ((GRAPHICS_REAL)0.0))
+                {
+                newSegmentReference->lineSegmentOriginX      = newSegmentReference->lineSegmentOriginX      / normaliseMaximumX;
+                newSegmentReference->lineSegmentDestinationX = newSegmentReference->lineSegmentDestinationX / normaliseMaximumX;
+                }
+              
+              if (normaliseMaximumY != ((GRAPHICS_REAL)0.0))
+                {
+                newSegmentReference->lineSegmentOriginY      = newSegmentReference->lineSegmentOriginY      / normaliseMaximumY;
+                newSegmentReference->lineSegmentDestinationY = newSegmentReference->lineSegmentDestinationY / normaliseMaximumY;
+                }
+
+              (*normalisedReference)->characterLineSegments =  newSegmentReference;
+              newSegmentReference->nextLineSegment          =  newSegmentTrack;
+              newSegmentTrack->lastLineSegment              =  newSegmentReference;
+                                                         
+              oldSegmentTrack                               =  oldSegmentTrack->nextLineSegment;
+
+              (*normalisedReference)->numberOfLineSegments  = (*normalisedReference)->numberOfLineSegments + ((GRAPHICS_UINT)1);       
+              }
+            else
+              {
+              objectError = GRAPHICS_OBJECT_INSTANTIATION_ERROR;
+              break;
+              }
+            }
+          }
+        else
+          {
+          objectError = GRAPHICS_OBJECT_INSTANTIATION_ERROR;
+          }
+        }
+      else
+        {
+        objectError = GRAPHICS_OBJECT_INSTANTIATION_ERROR;
+        }
+      }
+    else
+      {
+      objectError = GRAPHICS_OBJECT_INSTANTIATION_ERROR;
+      }
+    }
+  else
+    {
+    objectError = GRAPHICS_OBJECT_PARAMETER_ERROR;
+    }
+
+/******************************************************************************/
+
+  return(objectError);
+
+/******************************************************************************/
+  } /* end of normaliseCharacterSegments                                      */
+
+/******************************************************************************/
 /* copyCharacterOneToCharacterTwo() :                                         */
 /* - if character one's segment definitions exist and character two's segment */
 /*   definitions do NOT exist, copy character one's segments to character     */
@@ -426,13 +574,6 @@ graphicsError_t deleteCharacter(alphabetCharacters_tPtr selectedCharacter)
       {
       thislineSegment                     = selectedCharacter->characterLineSegments;
       selectedCharacter->lineSegmentIndex = (GRAPHICS_INT)(selectedCharacter->numberOfLineSegments - ((GRAPHICS_UINT)1));
-      
-      // Iterate to the segment one place from the end of the list of character line segments
-      /*while(thislineSegment->nextLineSegment->nextLineSegment != nullptr)
-        {
-        selectedCharacter->lineSegmentIndex = selectedCharacter->lineSegmentIndex + ((GRAPHICS_INT)1);
-        thislineSegment                     = thislineSegment->nextLineSegment;
-        }*/
       
       while ((selectedCharacter->lineSegmentIndex >= ((GRAPHICS_INT)0)) && (selectedCharacter->numberOfLineSegments > ((GRAPHICS_UINT)0)))
         {

@@ -680,7 +680,7 @@ graphicsError_t drawCharacterStrokeGraph(HDC                       hdc,
               }
             else
               {
-              if (columnIndex == (GRAPHICS_UINT)((GRAPHICS_REAL)strokeGraphPoints->graphColumnNumber * DESCENT_ROW_PROPORTION))
+              if (columnIndex == (GRAPHICS_UINT)((GRAPHICS_REAL)strokeGraphPoints->graphColumnNumber * strokeGraphPoints->descenderRatio))
                 {
                 penDescent.SetDashStyle(DashStyleDash);
 

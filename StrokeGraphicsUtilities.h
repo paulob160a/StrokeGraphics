@@ -65,6 +65,9 @@ typedef struct strokeGraphPointBase_tTag
   objectColour_t            passiveLineStrokeColour;
   objectColour_t            editLineStrokeColour;
   GRAPHICS_REAL             lineWidth;
+  GRAPHICS_REAL             descenderRatio; // a value in the range { 0, 1 } used to define the 
+                                            // boundary below which line segments are part of a 
+                                            // characters' descender
   } strokeGraphPointBase_t, *strokeGraphPointBase_tPtr;
 #pragma pack(pop)
 

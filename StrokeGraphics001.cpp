@@ -75,7 +75,8 @@ strokeGraphPointBase_t      strokeGraphPointBase = {
                                                    BRIGHT_YELLOW_PEN,
                                                    LIGHT_BLUE_PEN,
                                                    RED_PEN,
-                                                   STROKE_LINE_WIDTH
+                                                   STROKE_LINE_WIDTH,
+                                                   DESCENT_ROW_PROPORTION
                                                    };
                               
 strokeGraphToggleState_t      strokeGraphToggleState = STROKE_GRAPH_TOGGLE_STATE_SELECTED;

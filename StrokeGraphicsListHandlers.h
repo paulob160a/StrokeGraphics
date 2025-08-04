@@ -26,6 +26,9 @@ extern graphicsError_t addLineSegmentToCharacterList(const GRAPHICS_UINT        
                                                      const lineSegment_tPtr        newLineSegment,
                                                            alphabetCharacters_tPtr alphabetCharacters);
 
+extern graphicsError_t normaliseCharacterSegments(const alphabetCharacters_tPtr      characterReference,
+                                                       alphabetCharactersReal_tPtr *normalisedReference);
+
 extern graphicsError_t copyCharacterOneToCharacterTwo(const GRAPHICS_UINT           characterOne,
                                                       const GRAPHICS_UINT           characterTwo, 
                                                             alphabetCharacters_tPtr characterListOne,
