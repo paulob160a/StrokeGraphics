@@ -73,6 +73,7 @@ BUGS : (1) all characters are referenced to the character descender y-coordinate
            rather than "floating" at (say) half a character height. Simplest way to avoid 
            this is to add a line-segment at the descender y-coordinate - but put it under 
            the character else the character extent in 'x' will widen.
+           STATUS : Fixed and working in "GraphicsAgain001"
            
 Developed using : Windows 10 Home 22H2 OS Build 19045.6093  
                   Microsoft Visual Studio Community 2022 (64-bit) Version 17.14.9 Net Version 4.8.09037
